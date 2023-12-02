@@ -1,8 +1,11 @@
-import Control.Monad (ap, liftM2)
+import Control.Applicative (liftA2)
 import Data.Char (isDigit)
 
 main :: IO ()
-main = solver p1 >> solver p2
+main = readFile "input.txt" >>= print . liftA2 (,) (solver p1) (solver p2) . lines
+
+solver :: (String -> String) -> [String] -> Int
+solver parser = sum . fmap (read . (<*>) [head, last] . pure . parser)
 
 p1 :: String -> String
 p1 = filter isDigit
@@ -22,6 +25,3 @@ p2 s@(x : xs)
       'e' : 'i' : 'g' : 'h' : 't' : _ -> '8' : p2 xs
       'n' : 'i' : 'n' : 'e' : _ -> '9' : p2 xs
       _ -> p2 xs
-
-solver :: (String -> String) -> IO ()
-solver parser = readFile "input.txt" >>= print . sum . map (read . ap [head, last] . pure . parser) . lines
