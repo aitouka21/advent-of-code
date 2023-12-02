@@ -6,7 +6,7 @@ use warnings;
 sub process {
     my %p1_s = ( r => 12, g => 13, b => 14 );
     my %p2_s = ( r => 0,  g => 0,  b => 0 );
-    my ($game_id) = $_[0] =~ /Game (\d+)/g;
+    my ($game_id) = $_[0] =~ /Game (\d+)/;
     my $p1_valid = 1;
     while ( $_[0] =~ /(\d+) (\w)/g ) {
         $p1_valid = $p1_s{$2} >= $1 if $p1_valid;
