@@ -1,3 +1,5 @@
+#!/usr/bin/env runhaskell
+
 import Control.Applicative (liftA2)
 import Data.Char (isDigit)
 
@@ -14,7 +16,7 @@ p2 :: String -> String
 p2 [] = []
 p2 s@(x : xs)
   | x `elem` ['1' .. '9'] = x : p2 xs
-  | otherwise = case take 5 s of
+  | otherwise = case s of
       'o' : 'n' : 'e' : _ -> '1' : p2 xs
       't' : 'w' : 'o' : _ -> '2' : p2 xs
       't' : 'h' : 'r' : 'e' : 'e' : _ -> '3' : p2 xs
