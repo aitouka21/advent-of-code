@@ -1,5 +1,8 @@
 #!/usr/bin/env runhaskell
 
+-- TODO:
+-- 1. use a better data structure for the grid
+-- 2. no need to do a whole search on numbers for each asterisk actually
 module Main where
 
 import Data.Bifunctor (second)
