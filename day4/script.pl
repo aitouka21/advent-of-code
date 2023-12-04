@@ -1,16 +1,20 @@
 #!/usr/bin/env perl
 
-%instances = ();
+%card_counts = ();
 
 while(<>) {
-  $c = 0;
-  %h = ();
-  ($card) = /Card\s+(\d+)/;
-  $n_of_card = ++$instances{$card};
-  $h{$_}++ for (/(?:[:])(.*)/)[0] =~ /(\d+)/g;
-  $_ == 2 and $c++ for values %h;
-  $sum += ($c ? 2 ** ($c - 1) : 0);
-  $instances{++$card}+=$n_of_card for (1..$c);
+  %num_counts = ();
+
+  my ($card_ptr) = /Card\s+(\d+)/;
+  my $current_card_count = ++$card_counts{$card_ptr};
+
+  $num_counts{$_}++ for (/:(.*)/)[0] =~ /(\d+)/g;
+
+  my $winning_number_count = scalar(grep { $_ == 2 } values %num_counts);
+
+  $sum += 1 << $winning_number_count - 1;
+  $card_counts{++$card_ptr} += $current_card_count for (1..$winning_number_count);
 }
-$total += $_ for values %instances;
+
+$total += $_ for values %card_counts;
 print "($sum, $total)\n";
