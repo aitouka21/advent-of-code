@@ -2,9 +2,9 @@
 
 module Main where
 
-import Data.Function
-import Data.List
-import Data.Range
+import Control.Monad (join)
+import Data.Function (on)
+import Data.List (foldl', groupBy)
 
 blocks :: String -> [[String]]
 blocks input = filter (not . null . head) $ groupBy ((==) `on` (not . null)) $ lines input
@@ -16,20 +16,33 @@ readData filename = do
   let maps = map (map ((\[x, y, z] -> (read x, read y, read z)) . words) . tail) xs
   pure (seeds, maps)
 
-modify :: [Range Int] -> [(Int, Int, Int)] -> [Range Int]
-modify r [] = r
-modify r ((des, src, l) : ms) = mapped ++ modify remaining ms
- where
-  remaining = difference r [src +=* (src + l)]
-  mapped = fmap (+ (des - src)) <$> difference r remaining
+{- | consider the problem as translating the intersction of the given intervals and each map's domain
+with a fixed distance des - src, so the resulted segments of interval will be:
 
-ranges :: [Int] -> [Range Int]
-ranges [] = []
-ranges (x : y : xs) = (x +=* (x + y)) : ranges xs
+let modified = ∪ [c_n * dist_n --- d_n * dist_n] in modified ∪ ([a --- b] \ modified)
+-}
+modify :: [(Int, Int, Int)] -> (Int, Int) -> [(Int, Int)]
+modify [] r = [r]
+modify ((des, src, l) : ms) (a, b)
+  | d < a || c > b = modify ms (a, b)
+  | c <= a && b <= d = [translate (a, b)]
+  | a < c && d < b = translate (c, d) : (modify ms (a, c - 1) ++ modify ms (d + 1, b))
+  | a < c && b <= d = translate (c, b) : modify ms (a, c - 1)
+  | c <= a && d < b = translate (a, d) : modify ms (d + 1, b)
+ where
+  (c, d) = (src, src + l - 1)
+  translate (x, y) = let dist = des - src in (x + dist, y + dist)
+
+rangeSeeds :: [Int] -> [(Int, Int)]
+rangeSeeds [] = []
+rangeSeeds (x : y : xs) = (x, x + y - 1) : rangeSeeds xs
+
+solve :: [(Int, Int)] -> [[(Int, Int, Int)]] -> Int
+solve seeds maps = minimum $ fst <$> foldl' (flip (concatMap . modify)) seeds maps
 
 main :: IO ()
 main = do
   (seeds, maps) <- readData "input.txt"
-  let p1 = head $ fromRanges $ foldl' modify (map SingletonRange seeds) maps
-  let p2 = head $ fromRanges $ foldl' modify (ranges seeds) maps
+  let p1 = solve (map (join (,)) seeds) maps
+  let p2 = solve (rangeSeeds seeds) maps
   print (p1, p2)
