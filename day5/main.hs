@@ -16,10 +16,10 @@ readData filename = do
   let maps = map (map ((\[x, y, z] -> (read x, read y, read z)) . words) . tail) xs
   pure (seeds, maps)
 
-{- | consider the problem as translating the intersction of the given intervals and each map's domain
+{- | consider the problem as translating the intersction of the given intervals and each map's domain [c_n, d_n]
 with a fixed distance des - src, so the resulted segments of interval will be:
 
-let modified = ∪ [c_n * dist_n --- d_n * dist_n] in modified ∪ ([a --- b] \ modified)
+let modified = ∪ [c_n + dist_n, d_n + dist_n] in modified ∪ ([a, b] \ modified)
 -}
 modify :: [(Int, Int, Int)] -> (Int, Int) -> [(Int, Int)]
 modify [] r = [r]
