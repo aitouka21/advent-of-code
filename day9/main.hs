@@ -1,13 +1,8 @@
 #!/usr/bin/env runhaskell
 
-readData :: FilePath -> IO [[Int]]
-readData filename = do
-  contents <- readFile filename
-  pure $ map (map read . words) $ lines contents
-
 main :: IO ()
 main = do
-  inputs <- readData "input.txt"
+  inputs <- map (map read . words) . lines <$> readFile "input.txt"
   let p1 = sum $ map (solve . reverse) inputs
   let p2 = sum $ map solve inputs
   print (p1, p2)
