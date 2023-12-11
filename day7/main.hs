@@ -5,26 +5,28 @@
 
 module Main where
 
-import Control.Applicative
-import Data.List
-import Data.Maybe
-import Data.Ord
-import GHC.Exts
+import Control.Arrow ((&&&))
+import Data.List (elemIndex, group, sort, sortBy)
+import Data.Maybe (fromJust)
+import Data.Ord (Down (..), comparing)
+import GHC.Exts (sortWith)
 
 dict1 = "23456789TJQKA"
 dict2 = "J23456789TQKA"
 
 -- TODO: This sucks. Rewrite this shit.
 
+magic :: Char -> String
 magic 'J' = tail dict2
 magic c = [c]
 
 pos :: String -> Char -> Int
 pos dict = fromJust . flip elemIndex dict
 
+f :: String -> (String -> [String]) -> String -> [Int]
 f dict magic s = maximum (map score hand) : map (pos dict) s
  where
-  hand = sortBy (comparing Down) . map (liftA2 (,) length head) . group . sort <$> magic s
+  hand = sortBy (comparing Down) . map (length &&& head) . group . sort <$> magic s
 
   score hand = case map fst hand of
     [5] -> 6
@@ -35,6 +37,7 @@ f dict magic s = maximum (map score hand) : map (pos dict) s
     [2, 1, 1, 1] -> 1
     [1, 1, 1, 1, 1] -> 0
 
+main :: IO ()
 main = do
   input <- map ((\[hand, bid] -> (hand, read bid)) . words) . lines <$> readFile "input.txt"
   print $ sum [rank * bid | rank <- [1 ..] | (hand, bid) <- input, let s = f dict1 pure hand, then sortWith by s]
