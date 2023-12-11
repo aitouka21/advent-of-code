@@ -2,12 +2,11 @@
 
 import Data.List (find)
 import Data.Map (Map, fromList, (!))
-import Data.Maybe (fromJust)
 
 main :: IO ()
 main = do
   input <- indexed . lines <$> readFile "input.txt"
-  let (start, _) = fromJust $ find ((== 'S') . snd) input
+  let Just (start, _) = find ((== 'S') . snd) input
   let loop = solve (fromList input) start
   -- number of steps is half the length of the loop
   let steps = length loop `div` 2
