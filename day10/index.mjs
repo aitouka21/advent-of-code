@@ -2,8 +2,7 @@
 
 import fs from "fs";
 
-// TODO: rewrite in Haskell / Perl
-// using js to solve is kind of cheating
+// solve with crossing number algorithm
 const m = fs
   .readFileSync("input.txt", "utf-8")
   .split("\n")
@@ -11,8 +10,7 @@ const m = fs
 
 let pos = (() => {
   for (let i = 0; i < m.length; i++)
-    for (let j = 0; j < m[i].length; j++)
-      if (m[i][j][0] === "S") return [i, j];
+    for (let j = 0; j < m[i].length; j++) if (m[i][j][0] === "S") return [i, j];
 })();
 
 let steps = 0;
@@ -28,7 +26,7 @@ do {
   if (tile === "L") pos = m[x - 1][y][1] ? [x, y + 1] : [x - 1, y];
   if (tile === "J") pos = m[x - 1][y][1] ? [x, y - 1] : [x - 1, y];
   if (tile === "F") pos = m[x][y + 1][1] ? [x + 1, y] : [x, y + 1];
-  steps++
+  steps++;
 } while (!m[pos[0]][pos[1]][1]);
 
 let tiles = 0;
