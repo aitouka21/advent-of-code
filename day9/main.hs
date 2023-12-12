@@ -2,7 +2,7 @@
 
 main :: IO ()
 main = do
-  inputs <- map (map read . words) . lines <$> readFile "input.txt"
+  inputs <- map (map read . words) . lines <$> getContents
   let p1 = sum $ map (solve . reverse) inputs
   let p2 = sum $ map solve inputs
   print (p1, p2)

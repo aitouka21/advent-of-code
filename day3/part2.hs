@@ -14,7 +14,7 @@ type Dimension = (Int, Int)
 type Pos = (Int, Int)
 
 main :: IO ()
-main = readFile "input.txt" >>= print . solve . lines
+main = getContents >>= print . solve . lines
 
 solve :: [String] -> Int
 solve lines =

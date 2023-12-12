@@ -18,16 +18,16 @@ solve = memo2 solve'
   solve' ('#' : _) [] = 0
   solve' ('.' : xs) ys = solve xs ys
   solve' ('?' : xs) ys = solve xs ys + solve ('#' : xs) ys
-  solve' xs@('#' : _) (y : ys)
-    | length xs < y = 0
-    | '.' `elem` take y xs = 0
-    | length xs == y = solve [] ys
-    | xs !! y /= '#' = solve (drop (y + 1) xs) ys
+  solve' xs (y : ys)
+    | length xs == y, '.' `notElem` xs', null rest = solve [] ys
+    | length xs > y, '.' `notElem` xs', head rest /= '#' = solve (tail rest) ys
     | otherwise = 0
+   where
+    (xs', rest) = splitAt y xs
 
 main :: IO ()
 main = do
-  inputs <- map parse . lines <$> readFile "input.txt"
-  let p1 = sum [solve s cond | (s, cond) <- inputs]
-  let p2 = sum [solve s cond | input <- inputs, let (s, cond) = unfold input]
+  inputs <- map parse . lines <$> getContents
+  let !p1 = sum [solve s cond | (s, cond) <- inputs]
+  let !p2 = sum [solve s cond | input <- inputs, let (s, cond) = unfold input]
   print (p1, p2)

@@ -5,7 +5,7 @@ import Data.Map (Map, fromList, (!))
 
 main :: IO ()
 main = do
-  input <- indexed . lines <$> readFile "input.txt"
+  input <- indexed . lines <$> getContents
   let Just (start, _) = find ((== 'S') . snd) input
   let loop = solve (fromList input) start
   -- number of steps is half the length of the loop

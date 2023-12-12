@@ -8,7 +8,7 @@ import Data.Map qualified as M
 
 readData :: IO ([(String, (String, String))], String)
 readData = do
-  x : _ : xs <- lines <$> readFile "input.txt"
+  x : _ : xs <- lines <$> getContents
   let nodes = words . filter (liftA2 (||) isAlpha isSpace) <$> xs
   return (map (\[a, b, c] -> (a, (b, c))) nodes, cycle x)
 

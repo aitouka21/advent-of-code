@@ -4,7 +4,7 @@ import Data.Char (isDigit)
 
 main :: IO ()
 main = do
-  [l1, l2] <- map (drop 10) . lines <$> readFile "input.txt"
+  [l1, l2] <- map (drop 10) . lines <$> getContents
   let p1 = product $ zipWith solve (read <$> words l1) (read <$> words l2)
   let p2 = solve (read (filter isDigit l1)) (read (filter isDigit l2))
   print (p1, p2)

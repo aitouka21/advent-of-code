@@ -53,7 +53,7 @@ parseIt xs =
 
 main :: IO ()
 main = do
-  f <- readFile "input.txt"
+  f <- getContents
   let colorized = fmap (fmap from) . lines $ f
 
   let layers =

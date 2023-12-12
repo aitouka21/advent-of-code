@@ -4,7 +4,7 @@ import Control.Arrow ((&&&))
 import Data.Char (isDigit)
 
 main :: IO ()
-main = readFile "input.txt" >>= print . (solver p1 &&& solver p2) . lines
+main = getContents >>= print . (solver p1 &&& solver p2) . lines
 
 solver :: (String -> String) -> [String] -> Int
 solver parser = sum . fmap (read . (<*>) [head, last] . pure . parser)

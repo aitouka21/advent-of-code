@@ -39,6 +39,6 @@ f dict magic s = maximum (map score hand) : map (pos dict) s
 
 main :: IO ()
 main = do
-  input <- map ((\[hand, bid] -> (hand, read bid)) . words) . lines <$> readFile "input.txt"
+  input <- map ((\[hand, bid] -> (hand, read bid)) . words) . lines <$> getContents
   print $ sum [rank * bid | rank <- [1 ..] | (hand, bid) <- input, let s = f dict1 pure hand, then sortWith by s]
   print $ sum [rank * bid | rank <- [1 ..] | (hand, bid) <- input, let s = f dict2 (traverse magic) hand, then sortWith by s]
