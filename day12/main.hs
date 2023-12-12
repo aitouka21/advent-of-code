@@ -5,7 +5,7 @@ import Data.List (intercalate)
 import Data.MemoTrie (memo2)
 
 parse :: String -> (String, [Int])
-parse = second (read @[Int] . (\s -> "[" ++ s ++ "]")) . break (== ' ')
+parse = second (read . (\s -> "[" ++ s ++ "]")) . break (== ' ')
 
 unfold :: (String, [Int]) -> (String, [Int])
 unfold (s, cond) = (intercalate "?" (replicate 5 s), concat (replicate 5 cond))
