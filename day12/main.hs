@@ -1,8 +1,8 @@
 #!/usr/bin/env runhaskell
 
-import Control.Arrow (second)
-import Data.List (intercalate)
-import Data.MemoTrie (memo2)
+import           Control.Arrow (second)
+import           Data.List     (intercalate)
+import           Data.MemoTrie (memo2)
 
 parse :: String -> (String, [Int])
 parse = second (read . (\s -> "[" ++ s ++ "]")) . break (== ' ')

@@ -5,9 +5,9 @@
 -- 2. no need to do a whole search on numbers for each asterisk actually
 module Main where
 
-import Data.Bifunctor (second)
-import Data.Char (isDigit)
-import Data.List (find, foldl', groupBy, intersect)
+import           Data.Bifunctor (second)
+import           Data.Char      (isDigit)
+import           Data.List      (find, foldl', groupBy, intersect)
 
 type IndexedLine = (Int, String)
 type Dimension = (Int, Int)
@@ -42,4 +42,4 @@ getBoundary dim@(m, n) pos@(row, col) = [(r, c) | r <- [row - 1 .. row + 1], r >
 findPartNumbers :: [(String, [Pos])] -> [Pos] -> Int
 findPartNumbers nums boundary = case filter (\(_, numPos) -> not . null $ intersect numPos boundary) nums of
   [(n1, _), (n2, _)] -> read n1 * read n2
-  _ -> 0
+  _                  -> 0

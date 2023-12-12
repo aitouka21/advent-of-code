@@ -17,7 +17,7 @@ module Main where
 data Point = Point {isColorized :: Bool, char :: Char}
 
 instance Show Point where
-  show (Point True c) = "\ESC[31m" ++ show c ++ "\ESC[0m"
+  show (Point True c)  = "\ESC[31m" ++ show c ++ "\ESC[0m"
   show (Point False c) = show c
 
 toInt :: [Point] -> Int
@@ -44,9 +44,9 @@ parseIt xs =
       | isDigit x && isColorized x -> (x : xs') : remaining
       | isColorized x -> xs' : remaining
       | isDigit x -> case (xs', rest) of
-          (n, _) | any isColorized n -> (x : xs') : remaining
+          (n, _) | any isColorized n             -> (x : xs') : remaining
           (_, endWith : _) | isColorized endWith -> (x : xs') : remaining
-          _ -> remaining
+          _                                      -> remaining
      where
       (xs', rest) = span isDigit xs
       remaining = parseIt rest

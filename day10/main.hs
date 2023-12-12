@@ -1,7 +1,7 @@
 #!/usr/bin/env runhaskell
 
-import Data.List (find)
-import Data.Map (Map, fromList, (!))
+import           Data.List (find)
+import           Data.Map  (Map, fromList, (!))
 
 main :: IO ()
 main = do

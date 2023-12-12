@@ -2,9 +2,9 @@
 
 module Main where
 
-import Control.Applicative (liftA2)
-import Data.Char (isAlpha, isSpace)
-import Data.Map qualified as M
+import           Control.Applicative (liftA2)
+import           Data.Char           (isAlpha, isSpace)
+import qualified Data.Map            as M
 
 readData :: IO ([(String, (String, String))], String)
 readData = do

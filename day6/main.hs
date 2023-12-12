@@ -1,6 +1,6 @@
 #!/usr/bin/env runhaskell
 
-import Data.Char (isDigit)
+import           Data.Char (isDigit)
 
 main :: IO ()
 main = do

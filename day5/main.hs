@@ -2,9 +2,9 @@
 
 module Main where
 
-import Control.Monad (join)
-import Data.Function (on)
-import Data.List (foldl', groupBy)
+import           Control.Monad (join)
+import           Data.Function (on)
+import           Data.List     (foldl', groupBy)
 
 blocks :: String -> [[String]]
 blocks input = filter (not . null . head) $ groupBy ((==) `on` (not . null)) $ lines input
@@ -34,7 +34,7 @@ modify ((des, src, l) : ms) (a, b)
   translate (x, y) = let dist = des - src in (x + dist, y + dist)
 
 rangeSeeds :: [Int] -> [(Int, Int)]
-rangeSeeds [] = []
+rangeSeeds []           = []
 rangeSeeds (x : y : xs) = (x, x + y - 1) : rangeSeeds xs
 
 solve :: [(Int, Int)] -> [[(Int, Int, Int)]] -> Int
