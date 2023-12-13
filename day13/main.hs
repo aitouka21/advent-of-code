@@ -1,7 +1,7 @@
 #!/usr/bin/env runhaskell
 
-import Data.Function (on)
-import Data.List (groupBy, inits, tails, transpose)
+import           Data.Function (on)
+import           Data.List     (groupBy, inits, tails, transpose)
 
 parse :: String -> [[String]]
 parse = filter (not . null . head) . groupBy ((==) `on` null) . lines
