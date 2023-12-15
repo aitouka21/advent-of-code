@@ -1,8 +1,8 @@
 #!/usr/bin/env runhaskell
 
-import           Data.Char     (ord)
-import           Data.Foldable (foldl')
-import qualified Data.Map      as M
+import           Data.Char          (ord)
+import           Data.Foldable      (foldl')
+import qualified Data.IntMap.Strict as M
 
 splitOn :: Char -> String -> [String]
 splitOn c s = case span (/= c) s of
@@ -30,13 +30,13 @@ op (Set s n) []       = [(s, n)]
 op c@(Set s n) (x:xs) | fst x == s = (s, n) : xs
                       | otherwise  = x : op c xs
 
-exec :: [Command] -> M.Map Int [(String, Int)]
-exec = foldl' adjust (M.fromList $ map (, []) [0..255])
-  where adjust m c = M.adjust (op c) (hash (label c)) m
+exec :: [Command] -> M.IntMap [(String, Int)]
+exec = foldl' f $ M.fromList $ map (, []) [0..255]
+  where f m c = M.adjust (op c) (hash (label c)) m
 
-sum' :: M.Map Int [(String, Int)] -> Int
+sum' :: M.IntMap [(String, Int)] -> Int
 sum' = M.foldlWithKey' g 0
-  where g acc hash xs = sum (zipWith (\pos l -> (hash + 1) * pos * l) [1..] (map snd xs)) + acc
+  where g acc hash xs = sum (zipWith (\pos (_, len) -> (hash + 1) * pos * len) [1..] xs) + acc
 
 main :: IO ()
 main = do
