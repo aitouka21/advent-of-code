@@ -1,9 +1,13 @@
 #!/usr/bin/env runhaskell
 
-import           Data.Char       (ord)
-import           Data.Foldable   (Foldable (foldl'))
-import           Data.List.Split (splitOn)
-import qualified Data.Map        as M
+import           Data.Char     (ord)
+import           Data.Foldable (foldl')
+import qualified Data.Map      as M
+
+splitOn :: Char -> String -> [String]
+splitOn c s = case span (/= c) s of
+  (s, []) -> [s]
+  (s, s') -> s : splitOn c (tail s')
 
 data Command = Set String Int | Remove String deriving (Show)
 
@@ -12,7 +16,7 @@ label (Set s _)  = s
 label (Remove s) = s
 
 command :: String -> Command
-command s = case splitOn "=" s of
+command s = case splitOn '=' s of
   [s, n] -> Set s (read n)
   [s]    -> Remove (init s)
 
@@ -38,7 +42,7 @@ sum' = M.foldlWithKey' g 0
 
 main :: IO ()
 main = do
-  [inputs] <-  map (splitOn ",") . lines <$> getContents
+  [inputs] <-  map (splitOn ',') . lines <$> getContents
   let p1 = sum $ map hash inputs
   let p2 = sum' $ foldl' (flip adjust) m $ map command inputs
   print (p1, p2)
