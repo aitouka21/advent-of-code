@@ -8,7 +8,7 @@ import qualified Data.Set   as S
 type Pos = (Int, Int)
 data Dir = U | D | L | R deriving (Eq, Ord, Show)
 
-arr :: [String] -> Array (Int, Int) Char
+arr :: [String] -> Array Pos Char
 arr xss = array ((0, 0), (m, n)) [((i, j), xss !! i !! j) | i <- [0 .. m], j <- [0 .. n]]
  where (m, n) = (length xss - 1, length (head xss) - 1)
 
@@ -35,7 +35,7 @@ go (x, y) D = (x + 1, y)
 go (x, y) L = (x, y - 1)
 go (x, y) R = (x, y + 1)
 
-run :: Array (Int, Int) Char -> (Pos, Dir) -> S.Set (Pos, Dir)
+run :: Array Pos Char -> (Pos, Dir) -> S.Set (Pos, Dir)
 run m (start, dir) = f S.empty [(start, dir') | dir' <- nextDir (m ! start) dir]
  where
   f s [] = s
@@ -48,7 +48,7 @@ run m (start, dir) = f S.empty [(start, dir') | dir' <- nextDir (m ! start) dir]
     | otherwise = map (pos',) $ nextDir (m ! pos') dir
     where pos' = pos `go` dir
 
-solve :: Array (Int, Int) Char -> [(Pos, Dir)] -> Int
+solve :: Array Pos Char -> [(Pos, Dir)] -> Int
 solve m = maximum . map (length . S.map fst . run m)
 
 starts :: (Int, Int) -> [(Pos, Dir)]
