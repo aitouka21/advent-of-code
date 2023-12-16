@@ -48,8 +48,8 @@ run m (start, dir) = f S.empty [(start, dir') | dir' <- nextDir (m ! start) dir]
     | otherwise = [(pos', dir') | dir' <- nextDir (m ! pos') dir]
     where pos' = pos `go` dir
 
-solve :: Array Pos Char -> [(Pos, Dir)] -> Int
-solve m = maximum . map (length . S.map fst . run m)
+solve :: Array Pos Char -> (Pos, Dir) -> Int
+solve m = length . S.map fst . run m
 
 starts :: (Int, Int) -> [(Pos, Dir)]
 starts (m, n) =  [((x, y), d) | x <- [0 .. m], (y, d) <- [(0, R), (n, L)]]
@@ -58,6 +58,6 @@ starts (m, n) =  [((x, y), d) | x <- [0 .. m], (y, d) <- [(0, R), (n, L)]]
 main :: IO ()
 main = do
   m <- arr . lines <$> getContents
-  let !p1 = solve m [((0, 0), R)]
-  let !p2 = solve m $ starts (snd $ bounds m)
+  let !p1 = solve m ((0, 0), R)
+  let !p2 = maximum $ solve m <$> starts (snd $ bounds m)
   print (p1, p2)
