@@ -45,7 +45,7 @@ run m (start, dir) = f S.empty [(start, dir') | dir' <- nextDir (m ! start) dir]
 
   move (pos, dir)
     | not (inRange (bounds m) pos') = []
-    | otherwise = map (pos',) $ nextDir (m ! pos') dir
+    | otherwise = [(pos', dir') | dir' <- nextDir (m ! pos') dir]
     where pos' = pos `go` dir
 
 solve :: Array Pos Char -> [(Pos, Dir)] -> Int
