@@ -19,22 +19,21 @@ arr xss = array ((0, 0), (m, n)) [((i, j), digitToInt $ xss !! i !! j) | i <- [0
 solve :: Array Pos Int -> [Int] -> Pos -> Pos -> (Int, [Node])
 solve m steps start end = f S.empty [(0, [N start U 0])]
  where
-  f seen ((d, path):qs)
+  f seen ((d, path) : qs)
     | pos == end = (d, reverse path)
     | otherwise = f seen' $ merge qs' qs
    where
-
     N pos dir step = head path
 
     next =
       [ n
       | step' <- steps , dir' <- turn dir
-      , let pos' = go pos (dir', step') , inRange (bounds m) pos'
-      , let n = N pos' dir' step' , n `S.notMember` seen
+      , let pos' = go pos (dir', step'), inRange (bounds m) pos'
+      , let n = N pos' dir' step', n `S.notMember` seen
       ]
 
     qs' =
-      [ (d + d', n: path)
+      [ (d + d', n : path)
       | n@(N pos' _ _) <- next
       , let d' = sum (map (m !) $ range (min pos pos', max pos pos')) - m ! pos
       , then sortWith by d'
