@@ -1,3 +1,3 @@
 ## Part 1 looks good, and then part 2 wtf...
 
-![part1](/assets/part1.png)
+![part1](https://github.com/aitouka21/advent-of-code/blob/master/day18/assets/part1.png?raw=true)
