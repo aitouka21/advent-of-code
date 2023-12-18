@@ -58,9 +58,9 @@
       }
     }
 
-    var ctx = document.getElementById("plot").getContext("2d");
+    const ctx = document.getElementById("plot").getContext("2d");
 
-    var img = ctx.getImageData(0, 0, 800, 800);
+    const img = ctx.getImageData(0, 0, 800, 800);
 
     function coordToPoint(x, y) {
       return 800 * x + y;
@@ -74,7 +74,7 @@
     }
 
     let count = 0;
-    let pts = [];
+    const pts = [];
     for (let i = 0; i < 800; i++) {
       for (let j = 0; j < 800; j++) {
         if (m[i][j] === "#") {
