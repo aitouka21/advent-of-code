@@ -1,6 +1,7 @@
 <html>
   <body>
-    <canvas id="plot" width="800" , height="800"></canvas>
+    <canvas id="plot" width="800" , height="400"></canvas>
+    <h1>Part 2 WTF?</h1>
   </body>
 </html>
 <script>
@@ -14,7 +15,7 @@
       .map((line) => line.split(" "))
       .map(([dir, step, color]) => ({ dir, step: +step, color }));
 
-    const m = Array.from({ length: 800 }).map(() =>
+    const m = Array.from({ length: 400 }).map(() =>
       Array.from({ length: 800 }).map(() => ".")
     );
 
@@ -60,7 +61,7 @@
 
     const ctx = document.getElementById("plot").getContext("2d");
 
-    const img = ctx.getImageData(0, 0, 800, 800);
+    const img = ctx.getImageData(0, 0, 800, 400);
 
     function coordToPoint(x, y) {
       return 800 * x + y;
@@ -75,7 +76,7 @@
 
     let count = 0;
     const pts = [];
-    for (let i = 0; i < 800; i++) {
+    for (let i = 0; i < 400; i++) {
       for (let j = 0; j < 800; j++) {
         if (m[i][j] === "#") {
           count++;
