@@ -11,9 +11,9 @@ while(<>) {
   $b += ($step = hex($step));
   
   push @pts, [$x += $step, $y] if $dir eq 0;
+  push @pts, [$x, $y -= $step] if $dir eq 1;
   push @pts, [$x -= $step, $y] if $dir eq 2;
   push @pts, [$x, $y += $step] if $dir eq 3;
-  push @pts, [$x, $y -= $step] if $dir eq 1;
 }
 
 for (my $i = -1; $i < $#pts; ++$i) {
