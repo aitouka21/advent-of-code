@@ -1,30 +1,30 @@
 module Main where
 
-import Control.Monad
-import Data.Bifunctor
-import Data.Char
-import Data.Function
-import Data.List
-import Data.Map qualified as M
-import Data.Maybe
-import Data.Void
-import Debug.Trace
-import Text.Megaparsec
-import Text.Megaparsec.Char
-import Text.Megaparsec.Char.Lexer
+import           Control.Monad              (void)
+import           Data.Bifunctor             (bimap)
+import           Data.Char                  (isAlpha)
+import           Data.Function              (on)
+import           Data.List                  (groupBy)
+import qualified Data.Map                   as M
+import           Data.Maybe                 (fromJust)
+import           Data.Void                  (Void)
+import           Text.Megaparsec            (Parsec, between, choice, optional,
+                                             parseMaybe, takeWhile1P, try,
+                                             (<|>))
+import           Text.Megaparsec.Char       (char, string)
+import           Text.Megaparsec.Char.Lexer (decimal)
 
 main :: IO ()
 main = do
   [xs, _, ys] <- groupBy ((==) `on` null) . lines <$> getContents
-  let ins = M.fromList $ map (fromJust . parseMaybe insP) xs
-  let inputs = map (fromJust . parseMaybe input) ys
+  let insMap = M.fromList $ map (fromJust . parseMaybe insP) xs
+  let inputs = map (fromJust . parseMaybe inputP) ys
 
-  let p1 = sum [x + m + a + s | i@(Input x m a s) <- inputs, exec ins (Jump "in") i == "A"]
-  let dim = (1, 4000)
-  let p2 = sim ins (Jump "in") (Just (Input dim dim dim dim))
-  print p2
+  let p1 = sum [x + m + a + s | i@(Input x m a s) <- inputs, exec insMap (Jump "in") i == "A"]
+  let p2 = let dim = (1, 4000) in sim insMap (Jump "in") (Just (Input dim dim dim dim))
+  print (p1, p2)
 
-data V = X | M | A | S deriving (Show)
+data Part = X | M | A | S deriving (Show)
 
 type Range = (Int, Int)
 
@@ -32,17 +32,17 @@ data Input a = Input a a a a deriving (Show)
 
 data Ins
   = Jump String
-  | GreaterThan V Int Ins Ins
-  | LessThan V Int Ins Ins
+  | GreaterThan Part Int Ins Ins
+  | LessThan Part Int Ins Ins
   deriving (Show)
 
-get :: V -> Input a -> a
+get :: Part -> Input a -> a
 get X (Input x _ _ _) = x
 get M (Input _ m _ _) = m
 get A (Input _ _ a _) = a
 get S (Input _ _ _ s) = s
 
-set :: V -> Input a -> a -> Input a
+set :: Part -> Input a -> a -> Input a
 set X (Input _ m a s) x = Input x m a s
 set M (Input x _ a s) m = Input x m a s
 set A (Input x m _ s) a = Input x m a s
@@ -71,25 +71,25 @@ sim m ins (Just i) = sim m l lr + sim m r rr
   (l, r) = branch ins
   (lr, rr) = splitRange ins i
 
-splitRange :: Ins -> Input Range -> (Maybe (Input Range), Maybe (Input Range))
-splitRange (GreaterThan v n _ _) i = bimap (fmap (set v i)) (fmap (set v i)) $ forGT n (get v i)
-splitRange (LessThan v n _ _) i = bimap (fmap (set v i)) (fmap (set v i)) $ forLT n (get v i)
+  splitRange :: Ins -> Input Range -> (Maybe (Input Range), Maybe (Input Range))
+  splitRange (GreaterThan v n _ _) i = bimap (fmap (set v i)) (fmap (set v i)) $ forGT n (get v i)
+  splitRange (LessThan v n _ _) i = bimap (fmap (set v i)) (fmap (set v i)) $ forLT n (get v i)
 
-branch :: Ins -> (Ins, Ins)
-branch (GreaterThan _ _ l r) = (l, r)
-branch (LessThan _ _ l r) = (l, r)
+  branch :: Ins -> (Ins, Ins)
+  branch (GreaterThan _ _ l r) = (l, r)
+  branch (LessThan _ _ l r)    = (l, r)
 
-forGT :: Int -> Range -> (Maybe Range, Maybe Range)
-forGT n (low, hi)
-  | n < low = (Just (low, hi), Nothing)
-  | n >= hi = (Nothing, Just (low, hi))
-  | otherwise = (Just (n + 1, hi), Just (low, n))
+  forGT :: Int -> Range -> (Maybe Range, Maybe Range)
+  forGT n (low, hi)
+    | n < low = (Just (low, hi), Nothing)
+    | n >= hi = (Nothing, Just (low, hi))
+    | otherwise = (Just (n + 1, hi), Just (low, n))
 
-forLT :: Int -> Range -> (Maybe Range, Maybe Range)
-forLT n (low, hi)
-  | n <= low = (Nothing, Just (low, hi))
-  | n > hi = (Just (low, hi), Nothing)
-  | otherwise = (Just (low, n - 1), Just (n, hi))
+  forLT :: Int -> Range -> (Maybe Range, Maybe Range)
+  forLT n (low, hi)
+    | n <= low = (Nothing, Just (low, hi))
+    | n > hi = (Just (low, hi), Nothing)
+    | otherwise = (Just (low, n - 1), Just (n, hi))
 
 dist :: Range -> Int
 dist (low, hi) = hi - low + 1
@@ -117,10 +117,10 @@ stmt = try cmpStmt <|> jumpStmt
       '>' -> GreaterThan v n stmt1 stmt2
       '<' -> LessThan v n stmt1 stmt2
 
-  jumpStmt = Jump <$> takeWhile1P (Just "label") isAlpha
+  jumpStmt = Jump <$> jlbl
 
-input :: Parser (Input Int)
-input = brace $ Input <$> extract "x" <*> extract "m" <*> extract "a" <*> extract "s"
+inputP :: Parser (Input Int)
+inputP = brace $ Input <$> extract "x" <*> extract "m" <*> extract "a" <*> extract "s"
  where
   extract key = do
     void $ string key
