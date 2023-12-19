@@ -108,11 +108,8 @@ stmt = try cmpStmt <|> jumpStmt
   cmpStmt = do
     v <- choice [X <$ char 'x', M <$ char 'm', A <$ char 'a', S <$ char 's']
     cond <- char '>' <|> char '<'
-    n <- decimal
-    void $ char ':'
-    stmt1 <- stmt
-    void $ char ','
-    stmt2 <- stmt
+    n <- decimal <* char ':'
+    (stmt1, stmt2) <- (,) <$> stmt <* char ',' <*> stmt
     return $ case cond of
       '>' -> GreaterThan v n stmt1 stmt2
       '<' -> LessThan v n stmt1 stmt2
@@ -122,12 +119,7 @@ stmt = try cmpStmt <|> jumpStmt
 inputP :: Parser (Input Int)
 inputP = brace $ Input <$> extract "x" <*> extract "m" <*> extract "a" <*> extract "s"
  where
-  extract key = do
-    void $ string key
-    void $ char '='
-    val <- decimal
-    void $ optional $ char ','
-    return val
+  extract key = string key *> char '=' *> decimal <* optional (char ',')
 
 brace :: Parser a -> Parser a
 brace = between (char '{') (char '}')
