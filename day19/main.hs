@@ -1,25 +1,17 @@
 module Main where
 
-import           Control.Monad              (void)
-import           Data.Bifunctor             (bimap)
-import           Data.Char                  (isAlpha)
-import           Data.Function              (on)
-import           Data.List                  (groupBy)
-import qualified Data.Map                   as M
-import           Data.Maybe                 (fromJust)
-import           Data.Void                  (Void)
-import           Text.Megaparsec            (Parsec, between, choice, optional,
-                                             parseMaybe, takeWhile1P, try,
-                                             (<|>))
-import           Text.Megaparsec.Char       (char, string)
-import           Text.Megaparsec.Char.Lexer (decimal)
+import Data.Bifunctor
+import Data.Char
+import Data.Map qualified as M
+import Data.Void
+import Text.Megaparsec
+import Text.Megaparsec.Char
+import Text.Megaparsec.Char.Lexer
 
 main :: IO ()
 main = do
-  [xs, _, ys] <- groupBy ((==) `on` null) . lines <$> getContents
-  let insMap = M.fromList $ map (fromJust . parseMaybe insP) xs
-  let inputs = map (fromJust . parseMaybe inputP) ys
-
+  Just (ins, inputs) <- parseMaybe parseContent <$> getContents
+  let insMap = M.fromList ins
   let p1 = sum [x + m + a + s | i@(Input x m a s) <- inputs, exec insMap (Jump "in") i == "A"]
   let p2 = let dim = (1, 4000) in sim insMap (Jump "in") (Just (Input dim dim dim dim))
   print (p1, p2)
@@ -77,7 +69,7 @@ sim m ins (Just i) = sim m l lr + sim m r rr
 
   branch :: Ins -> (Ins, Ins)
   branch (GreaterThan _ _ l r) = (l, r)
-  branch (LessThan _ _ l r)    = (l, r)
+  branch (LessThan _ _ l r) = (l, r)
 
   forGT :: Int -> Range -> (Maybe Range, Maybe Range)
   forGT n (low, hi)
@@ -123,3 +115,6 @@ inputP = brace $ Input <$> extract "x" <*> extract "m" <*> extract "a" <*> extra
 
 brace :: Parser a -> Parser a
 brace = between (char '{') (char '}')
+
+parseContent :: Parser ([(String, Ins)], [Input Int])
+parseContent = (,) <$> insP `endBy1` newline <* newline <*> inputP `endBy1` newline <* eof
