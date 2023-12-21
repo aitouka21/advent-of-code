@@ -1,12 +1,12 @@
 module Main where
 
-import Data.Array.Unboxed
+import Data.Array.Unboxed qualified as A
 import Data.Set qualified as S
 
-type Map = UArray (Int, Int) Char
+type Map = A.UArray (Int, Int) Char
 
 arr :: [[Char]] -> Map
-arr xss = array ((0, 0), (n, m)) [((i, j), xss !! i !! j) | i <- [0 .. n], j <- [0 .. m]]
+arr xss = A.array ((0, 0), (n, m)) [((i, j), xss !! i !! j) | i <- [0 .. n], j <- [0 .. m]]
  where
   n = length xss - 1
   m = length (head xss) - 1
@@ -22,7 +22,7 @@ ref (i, j) = (i `mod` 131, j `mod` 131)
 g :: Map -> S.Set (Int, Int) -> S.Set (Int, Int)
 g m s = s'
  where
-  f pos = S.fromList [pos' | pos' <- next pos, m ! ref pos' /= '#']
+  f pos = S.fromList [pos' | pos' <- next pos, m A.! ref pos' /= '#']
   s' = S.unions $ S.map f s
 
 f :: Int -> Int
