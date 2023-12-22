@@ -19,7 +19,7 @@ const floors = [];
 for (const brick of bricks) {
   let [zIndex, zLength] = [brick.from[2], brick.to[2] - brick.from[2] + 1];
 
-  while (--zIndex > 0) {
+  while (--zIndex) {
     const floor = floors[zIndex];
     if (floor) {
       const supports = floor.filter((x) => check(x, brick));
