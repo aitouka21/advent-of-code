@@ -26,6 +26,7 @@ overlap :: Brick -> Brick -> Bool
 overlap a b = (a.start.x <= b.end.x && b.start.x <= a.end.x)
            && (a.start.y <= b.end.y && b.start.y <= a.end.y)
 
+-- TODO: Why I set the z index to 1?????
 fall :: [Brick] -> Brick -> [Brick]
 fall [] brick = [setZ 1 brick]
 fall (b:bs) brick
