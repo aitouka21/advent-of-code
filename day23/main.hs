@@ -1,5 +1,6 @@
 module Main (main) where
 
+import           Control.Arrow      (second, (***))
 import qualified Data.Array.Unboxed as A
 import qualified Data.Map.Strict    as M
 import qualified Data.Set           as S
@@ -20,6 +21,7 @@ go (x, y) (dx, dy) = (x + dx, y + dy)
 
 dirs :: [(Int, Int)]
 dirs = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+
 run :: ((Int, Int) -> Char -> Bool) -> Map -> Pos -> [Pos] -> [Me]
 run valid map start ends = f $ Me start start 0
   where
@@ -67,8 +69,7 @@ run' m start end = f S.empty start
 main :: IO ()
 main = do
   input <- arr . lines <$> getContents
-  let (_, (n, m)) = A.bounds input
-  let (start, end) = ((0, 1), (n, m - 1))
+  let (start, end) = second succ *** second pred $ A.bounds input
   let !p1 = maximum $ map cost $ run valid input start [end]
   let !p2 = maximum $ run' input start end
   print (p1, p2)
