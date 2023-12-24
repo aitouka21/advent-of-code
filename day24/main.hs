@@ -38,12 +38,12 @@ p2 vs = sum $ take 3 $ Mat.toList m
                        , [ v3z - v1z, 0, v1x - v3x, p1z - p3z, 0, p3x - p1x]
                        ]
 
-    mB = Mat.fromLists [ [(p1y * v1x - p2y * v2x) - (p1x * v1y - p2x * v2y)]
-                       , [(p1y * v1x - p3y * v3x) - (p1x * v1y - p3x * v3y)]
-                       , [(p1z * v1y - p2z * v2y) - (p1y * v1z - p2y * v2z)]
-                       , [(p1z * v1y - p3z * v3y) - (p1y * v1z - p3y * v3z)]
-                       , [(p1z * v1x - p2z * v2x) - (p1x * v1z - p2x * v2z)]
-                       , [(p1z * v1x - p3z * v3x) - (p1x * v1z - p3x * v3z)]
+    mB = Mat.fromLists [ [(p1y * v1x - p1x * v1y) - (p2y * v2x - p2x * v2y)]
+                       , [(p1y * v1x - p1x * v1y) - (p3y * v3x - p3x * v3y)]
+                       , [(p1z * v1y - p1y * v1z) - (p2z * v2y - p2y * v2z)]
+                       , [(p1z * v1y - p1y * v1z) - (p3z * v3y - p3y * v3z)]
+                       , [(p1z * v1x - p1x * v1z) - (p2z * v2x - p2x * v2z)]
+                       , [(p1z * v1x - p1x * v1z) - (p3z * v3x - p3x * v3z)]
                        ]
 
     Right m = Mat.multStd <$> Mat.inverse mA <*> pure mB
