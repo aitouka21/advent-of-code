@@ -1,7 +1,6 @@
 module Main (main) where
 
 import           Control.Arrow               ((***))
-import qualified Data.Array.Unboxed          as A
 import           Data.Complex                (realPart)
 import           Data.Foldable               (foldl')
 import           Data.List                   (sort, sortOn)
