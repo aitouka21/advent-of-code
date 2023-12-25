@@ -32,18 +32,21 @@ main = do
   print . uncurry (*) . (length *** length) . span (< 0) . sort $ map realPart fiedlerVector
 
 deg :: [Vertex] -> [Edge] -> LA.Matrix LA.R
-deg vertices edges = LA.diag $ LA.vector $ map (fromIntegral . snd) $ Map.toAscList diag
+deg vertices edges = LA.diag $ LA.vector $ map snd $ Map.toAscList diag
   where
     dim = length vertices
-    a = Map.fromList $ map (, 0 :: Int) vertices
+    a = Map.fromList $ map (, 0) vertices
     diag = foldl' (\m (va, vb) -> Map.adjust (+1) vb $ Map.adjust (+1) va m) a edges
 
 adj :: [Vertex] -> [Edge] -> LA.Matrix LA.R
-adj vertices edges = m
+adj vertices edges = LA.mapMatrixWithIndex set zero
   where
     dim = length vertices
-    zero = (dim LA.>< dim) (repeat 0 :: [LA.R])
-    m = LA.mapMatrixWithIndex (\(i, j) _ -> if (i, j) `elem` edges || (j, i) `elem` edges then 1 else 0) zero
+    zero = (dim LA.>< dim) (repeat @LA.R 0)
+    set (i, j) _
+      | (i, j) `elem` edges = 1
+      | (j, i) `elem` edges = 1
+      | otherwise           = 0
 
 type Parser = P.Parsec Void String
 
